@@ -3,8 +3,9 @@ import os
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
+from pytesseract import pytesseract
 
-image_url = os.path.join(os.getcwd(), '..', 'image', 'test.jpg')
+image_url = os.path.join(os.getcwd(), '..', 'image', 'easy_test.jpeg')
 print(image_url)
 
 large = cv2.imread(image_url)
@@ -34,13 +35,11 @@ idx = 0
 # 글자만 이미지 추출
 for x, y in word_area:
     img = rgb[y[0]:y[1], x[0]:x[1]]
-    print(img)
+    if (y[1] - y[0]) == 0 or (x[1] - x[0]) == 0:
+        continue
+    line = pytesseract.image_to_string(img, timeout=100, lang='kor')
+    if not line.strip():
+        continue
+    print(line.strip())
     cv2.imshow(f'img_{idx}', img)
     cv2.waitKey()
-
-# show image with contours rect
-cv2.imshow('rects', rgb)
-cv2.waitKey()
-print(word_area)
-
-
